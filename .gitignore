@@ -1,0 +1,11 @@
+**/.idea/
+**/*.iml
+.DS_Store
+*.deb
+**/.vscode/*
+.pem
+.terraform
+.terraform.lock.hcl
+terraform.tfstate*
+terraform.tfvars
+.terraform.tfstate.lock.info
