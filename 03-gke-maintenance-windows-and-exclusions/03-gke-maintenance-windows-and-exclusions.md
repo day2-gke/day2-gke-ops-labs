@@ -101,3 +101,182 @@ gcloud container clusters create simple-maintenance-window-cluster \
 gcloud container clusters describe simple-maintenance-window-cluster \
 --zone=<your-zone> | grep -A 2 dailyMaintenanceWindow
 ```
+- To see the cluster settings in the Console navigate to Kubernetes Engine > Clusters > simple-maintenance-window-cluster or run the following command and click on the URL
+```
+echo -e "\nsimple-maintenance-window-cluster URL: https://console.cloud.google.com/kubernetes/clusters/details/<your-zone>/simple-maintenance-window-cluster/details?project=${GOOGLE_CLOUD_PROJECT}\n"
+```
+In the Automation section there is a Maintenance window entry that shows the configured settings.
+
+## Remove a maintenance window
+- To remove the existing maintenance windows on existing-cluster, run the following command:
+```
+gcloud container clusters update existing-cluster \
+--clear-maintenance-window \
+--zone <your-zone>
+```
+
+- Verify existing-cluster has the maintenance window removed
+```
+gcloud container clusters describe existing-cluster \
+--zone=us-central1-a | grep -A 4 recurringWindow
+```              
+- To see the cluster settings in the Console navigate to Kubernetes Engine > Clusters > existing-cluster or run the following command and click on the URL
+```
+echo -e "\nexisting-cluster URL: https://console.cloud.google.com/kubernetes/clusters/details/us-central1-a/existing-cluster/details?project=${GOOGLE_CLOUD_PROJECT}\n"
+```
+In the Automation section there is a Maintenance window entry that shows the settings are removed.
+
+# Maintenance exclusions
+With maintenance exclusions, you can prevent automatic maintenance from occurring during a specific time period. For example, many retail businesses have business guidelines prohibiting infrastructure changes during the end-of-year holidays. As another example, if a company is using an API that is scheduled for deprecation, they can use maintenance exclusions to pause minor upgrades to give them time to migrate applications.
+
+For known high-impact events, we recommend that you match any internal change restrictions with a maintenance exclusion that starts one week before the event and lasts for the duration of the event.
+
+Exclusions have no recurrence. Instead, create each instance of a periodic exclusion separately.
+
+When exclusions and maintenance windows overlap, exclusions have precedence.
+
+To learn how to set up maintenance exclusions for a new or existing cluster, see Configure a maintenance exclusion.
+
+## Scope of maintenance to exclude
+Not only can you specify when to prevent automatic maintenance on your cluster, you can restrict the scope of automatic updates that might occur. Maintenance exclusion scopes are useful for the following types of scenarios, among others:
+
+- No upgrades - avoid any maintenance: You want to temporarily avoid any change to your cluster during a specific period of time.
+- No minor upgrades - maintain current Kubernetes minor version: You want to temporarily maintain the minor version of a cluster to avoid API changes or validate the next minor version.
+- No minor or node upgrades - prevent node pool disruption: You want to temporarily avoid any eviction and rescheduling of your workloads because of node upgrades.
+
+The following table lists the scope of automatic updates that you can restrict in a maintenance exclusion. The table also indicates what type of upgrades that occur (minor and/or patch). When upgrades occur, the VM(s) for the control plane and/or node pool restarts. For control planes, VM restarts may temporarily decrease the Kubernetes API Server availability, especially in zonal cluster topology with a single control plane. For nodes, VM restarts trigger Pod rescheduling which can temporarily disrupt existing workloads. You can set your tolerance for workload disruption using a Pod Disruption Budget (PDB).
+
+For definitions on minor and patch versions, see Versioning scheme.
+
+## Multiple exclusions
+You may set multiple exclusions on a cluster. These exclusions may have different scopes and may have overlapping time ranges. The end-of-year holiday season use case is an example of overlapping exclusions, where both the "No upgrades" and "No minor upgrades" scopes are in use.
+
+When exclusions overlap, if any active exclusion (that is, current time is within the exclusion time period) blocks an upgrade, the upgrade will be postponed.
+
+Using the end-of-year holiday season use case, a cluster has the following exclusions specified:
+
+- No minor upgrades: September 30 - January 15
+- No upgrades: November 19 - December 4
+- No upgrades: December 15 - January 5
+As a result of these overlapping exclusions, the following upgrades will be blocked on the cluster:
+
+- Patch upgrade to the node pool on November 25 (rejected by "No upgrades" exclusion)
+- Minor upgrade to the control plane on December 20 (rejected by "No minor upgrades" and "No upgrades" exclusion)
+- Patch upgrade to the control plane on December 25 (rejected by "No upgrades" exclusion)
+- Minor upgrade to the node pool on January 1 (rejected by "No minor upgrades" and "No upgrades" exclusion)
+The following maintenance would be permitted on the cluster:
+
+- Patch upgrade to the control plane on November 10 (permitted by "No minor upgrades" exclusion)
+- VM disruption due to GKE maintenance on December 10 (permitted by "No minor upgrades" exclusion)
+
+## Exclusion expiration
+When an exclusion expires (that is, the current time has moved beyond the end time specified for the exclusion), that exclusion will no longer prevent GKE updates. Other exclusions that are still valid (not expired) will continue to prevent GKE updates.
+
+When no exclusions remain that prevent cluster upgrades, your cluster will gradually upgrade to the current default version in the cluster's release channel (or the static default for clusters in no release channel).
+
+If your cluster is multiple minor versions behind the current default version after exclusion expiry, GKE will schedule one minor upgrade per month (upgrading both cluster control plane and nodes) until your cluster has reached the default version for the Release Channel. If you would like to return your cluster to the default version sooner, you can execute manual upgrades.
+
+## Limitations
+Maintenance exclusions have the following limitations:
+
+- You can restrict the scope of automatic upgrades in a maintenance exclusion only for clusters that are enrolled in a release channel. The maintenance exclusion defaults to the "No upgrades" scope.
+
+- You can add a maximum of three maintenance exclusions that exclude all upgrades (that is, a scope of "no upgrades"). These exclusions must be configured to allow for at least 48 hours of maintenance availability in a 32-day rolling window.
+
+- You can have a maximum of 20 maintenance exclusions in total.
+
+- If you do not specify a scope in your exclusion, the scope defaults to "no upgrades".
+
+- The length of a maintenance exclusion has restrictions based on the specified exclusion scope:
+  - No upgrades: Cannot exceed 30 days.
+  - No minor upgrades: Cannot end more than 180 days after the exclusion creation date, or extend past the end of life date of the minor version.
+  - No minor or node upgrades: Cannot end more than 180 days after the exclusion creation date, or extend past the end of life date of the minor version.
+ 
+## Usage examples
+Here are some example use cases for restricting the scope of updates that can occur.
+
+**Example: Retailer preparing for the end-of-year holiday season**
+In this example, the retail business does not want disruptions during the highest-volume sales periods, which is the four days encompassing Black Friday through Cyber Monday, and the month of December until the start of the new year. In preparation for the shopping season, the cluster administrator sets up the following exclusions:
+
+- No minor upgrades: Allow only patch updates on the control plane and nodes between September 30 - January 15.
+- No upgrades: Freeze all upgrades between November 19 - December 4.
+- No upgrades: Freeze all upgrades between December 15 - January 5.
+If no other exclusion windows apply when the maintenance exclusion expires, the cluster is upgraded to a new GKE minor version if one was made available between September 30 and January 6.
+
+**Example: Company using a beta API in Kubernetes that's being removed**
+In this example, a company is using the CustomResourceDefinition apiextensions.k8s.io/v1beta1 API, which will be removed in version 1.22. While the company is running versions earlier than 1.22, the cluster administrator sets up the following exclusion:
+
+- No minor upgrades: Freeze minor upgrades for three months while migrating customer applications from apiextensions.k8s.io/v1beta1 to apiextensions.k8s.io/v1.
+
+**Example: Company's legacy database not resilient to node pool upgrades**
+In this example, a company is running a database that does not respond well to Pod evictions and rescheduling that occurs during a node pool upgrade. The cluster administrator sets up the following exclusion:
+
+- No minor or node upgrades: Freeze node upgrades for three months. When the company is ready to accept downtime for the database, they trigger a manual node upgrade.
+
+# Configuring a maintenance exclusion
+To set up a maintenance exclusion for your cluster, you need to specify the following:
+
+- Name: The name of the exclusion (optional).
+- Start time: The date and time for when the exclusion period should start.
+- End time: The date and time for when the exclusion period should end. Refer to the following table for restrictions on the length of an exclusion period for each of the available scopes.
+- Scope: The scope of automatic upgrades to restrict. Refer to the following table that lists the available exclusion scopes.
+
+For definitions on minor and patch versions, see Versioning scheme.
+
+Maintenance exclusions have the following limitations:
+
+- You can restrict the scope of automatic upgrades in a maintenance exclusion only for clusters that are enrolled in a release channel.
+
+- You can add a maximum of 3 maintenance exclusions that exclude all upgrades (that is, a scope of "no upgrades").
+
+- You can have a maximum of 20 maintenance exclusions in total.
+
+- If you do not specify a scope in your exclusion, the scope defaults to "no upgrades".
+
+## Configure a maintenance exclusion for an existing cluster
+- To create a maintenance exclusion for existing-cluster for Black Friday, run the following command:
+```
+gcloud container clusters update existing-cluster \
+--add-maintenance-exclusion-name black-friday \
+--add-maintenance-exclusion-start 2022-11-23T00:00:00-06:00 \
+--add-maintenance-exclusion-end 2022-11-26T23:59:59-06:00 \
+--add-maintenance-exclusion-scope no_upgrades \
+--zone us-central1-a
+```
+**Flags**
+1. --add-maintenance-exclusion-name : the name of the maintenance exclusion.
+2. --add-maintenance-exclusion-start : the start date and time for the exclusion.
+3. --add-maintenance-exclusion-end : the end date and time for the exclusion.
+4. --add-maintenance-exclusion-scope : the scope of upgrade to exclude, which can be one of the following values: no_upgrades, no_minor_upgrades, or no_minor_or_node_upgrades.
+
+To view supported date and time formats, run gcloud topic datetimes.
+
+- Verify existing-cluster has the maintenance exclusion configured
+```
+gcloud container clusters describe existing-cluster \
+--zone=us-central1-a | grep -A 4 maintenanceExclusions
+```
+- To see the cluster settings in the Console navigate to Kubernetes Engine > Clusters > existing-cluster or run the following command and click on the URL
+```
+echo -e "\nexisting-cluster URL: https://console.cloud.google.com/kubernetes/clusters/details/us-central1-a/existing-cluster/details?project=${GOOGLE_CLOUD_PROJECT}\n"
+```
+In the Automation section there is a Maintenance exclusions entry that shows the configured settings
+
+## Remove a maintenance exclusion
+- To remove the existing maintenance exclusion on existing-cluster for Black Friday, run the following command:
+```
+gcloud container clusters update existing-cluster \
+--remove-maintenance-exclusion black-friday \
+--zone us-central1-a
+```
+- Verify existing-cluster has the maintenance exclusion has been removed
+```
+gcloud container clusters describe existing-cluster \
+--zone=us-central1-a | grep -A 4 maintenanceExclusions
+```                 
+- To see the cluster settings in the Console navigate to Kubernetes Engine > Clusters > existing-cluster or run the following command and click on the URL
+```
+echo -e "\nexisting-cluster URL: https://console.cloud.google.com/kubernetes/clusters/details/us-central1-a/existing-cluster/details?project=${GOOGLE_CLOUD_PROJECT}\n"
+```
+In the Automation section there is a Maintenance exclusions entry that shows the settings are removed.
+
