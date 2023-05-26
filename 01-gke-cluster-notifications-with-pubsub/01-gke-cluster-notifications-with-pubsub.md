@@ -101,4 +101,52 @@ GKE sends the following cluster notification types:
 
 For example, specifying filter="UpgradeEvent|SecurityBulletinEvent" tells GKE to only send notifications for UpgradeEvent and SecurityBulletinEvent notification types. See the Cluster notifications documentation for more information.
 
-###
+### Enable notifications when creating a new cluster
+
+- Create new-cluster and only send the UpgradeEvent and SecurityBulletinEvent notification types
+
+```
+gcloud container clusters create new-cluster \
+--notification-config=pubsub=ENABLED,pubsub-topic=projects/${GOOGLE_CLOUD_PROJECT}/topics/${PUBSUB_TOPIC_ID},filter="UpgradeEvent|SecurityBulletinEvent" \
+--num-nodes=1 \
+--release-channel=regular \
+--zone=us-central1-a
+```
+
+- Verify the configuration
+
+```
+gcloud container clusters describe new-cluster --zone=us-central1-a | grep -A 7 notificationConfig
+```
+
+### Update notifications settings for a cluster
+
+- Update existing-cluster to only send the UpgradeEvent and SecurityBulletinEvent notification types
+
+```
+gcloud container clusters update existing-cluster \
+--notification-config=pubsub=ENABLED,pubsub-topic=projects/${GOOGLE_CLOUD_PROJECT}/topics/${PUBSUB_TOPIC_ID},filter="UpgradeEvent|SecurityBulletinEvent" \
+--zone=us-central1-a
+```
+
+- Verify the configuration
+
+```
+gcloud container clusters describe existing-cluster --zone=us-central1-a | grep -A 7 notificationConfig
+```
+
+### Disable notifications for a cluster
+
+- Disable cluster notifications on existing-cluster.
+
+```
+gcloud container clusters update existing-cluster \
+--notification-config=pubsub=DISABLED \
+--zone=us-central1-a
+```
+
+- Verify the configuration
+
+```
+gcloud container clusters describe existing-cluster --zone=us-central1-a | grep -A 1 notificationConfig
+```
