@@ -8,80 +8,81 @@ In this lab, you will learn how to do the following:
 
 - Transform unstructured GKE log messages to structured ones
 
-Infrastructure setup
+# Infrastructure setup
 Duration: 10:00
 
-Create the GKE cluster
+## Create the GKE cluster
 In Cloud Shell, set the environment variables:
-
+```
 export region=us-east1
 export zone=${region}-b
 export project_id=$(gcloud config get-value project)
-Copied!
+```
 In Cloud Shell, Set the default zone and project ID so that you don't have to specify these values in every subsequent command:
-
+```
 gcloud config set compute/zone ${zone}
 gcloud config set project ${project_id}
-Copied!
-Create the GKE cluster with system-only logging turned on:
+```
+## Create the GKE cluster with system-only logging turned on:
+```
 gcloud container clusters create custom-fluentbit \
 --zone $zone \
 --logging=SYSTEM \
 --tags=gke-cluster-with-customized-fluentbit \
 --scopes=logging-write,storage-rw
-Copied!
-Verify the GKE cluster
+```
+## Verify the GKE cluster
 Connect to a Google Kubernetes Engine cluster and validate that it's been created correctly.
 
 Use the following command to see the cluster's status:
-
+```
 gcloud container clusters list
-Copied!
+```
 The cluster status will say PROVISIONING. Wait a moment and run the command above again. Repeat until the status is RUNNING. This could take several minutes. Verify that the cluster named central has been created.
 
 You can also check the progress in the Cloud Console - Navigation menu > Kubernetes Engine > Clusters.
 
 Once your cluster has RUNNING status, get the cluster credentials:
-
+```
 gcloud container clusters get-credentials custom-fluentbit --zone $zone
-Copied!
+```
 (Output)
-
+```
 Fetching cluster endpoint and auth data.
 kubeconfig entry generated for central.
-Copied!
+```
 Verify that the nodes have been created:
-
+```
 kubectl get nodes
-Copied!
+```
 Your output should look like this:
-
+```
 NAME                                       STATUS    ROLES     AGE       VERSION
 gke-custom-fluentbit-default-pool-4d4150d0-7wqr   Ready    <none>   11m   v1.22.8-gke.200
 gke-custom-fluentbit-default-pool-4d4150d0-92wq   Ready    <none>   11m   v1.22.8-gke.200
 gke-custom-fluentbit-default-pool-4d4150d0-bptp   Ready    <none>   11m   v1.22.8-gke.200
-Copied!
-Deploy application
+```
+# Deploy application
 Next, you will deploy a sample test-logger application that emits logs in multiple formats.
 
 Run the following to clone the repo:
-
+```
 git clone https://github.com/xiangshen-dk/kubernetes-customize-fluentbit.git
-Copied!
+```
 Change to the kubernetes-customize-fluentbit directory:
-
+```
 cd kubernetes-customize-fluentbit
-Copied!
+```
 By default, the sample application that you deploy continuously emits random logging statements. The Docker container is built from the source code under the test-logger subdirectory.
 
 Build the test-logger container image:
-
+```
 docker build -t test-logger test-logger
-Copied!
+```
 Tag the container before pushing it to the registry:
-
+```
 docker tag test-logger gcr.io/${project_id}/test-logger
-Copied!
+```
 Push the container image:
 
 docker push gcr.io/${project_id}/test-logger
