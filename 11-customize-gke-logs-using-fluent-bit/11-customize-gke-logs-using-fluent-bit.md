@@ -84,76 +84,76 @@ Tag the container before pushing it to the registry:
 docker tag test-logger gcr.io/${project_id}/test-logger
 ```
 Push the container image:
-
+```
 docker push gcr.io/${project_id}/test-logger
-Copied!
+```
 Update the deployment file:
-
+```
 envsubst < kubernetes/test-logger.yaml > kubernetes/test-logger-deploy.yaml
-Copied!
+```
 Deploy the test-logger application to the GKE cluster:
-
+```
 kubectl apply -f kubernetes/test-logger-deploy.yaml
-Copied!
+```
 View the status of the test-logger pods:
-
+```
 kubectl get pods
-Copied!
+```
 Repeat this command until the output looks like the following, with all three test-logger pods running:
-
+```
 NAME                           READY   STATUS    RESTARTS   AGE
 test-logger-58f7bfdb89-4d2b5   1/1     Running   0          28s
 test-logger-58f7bfdb89-qrlbl   1/1     Running   0          28s
 test-logger-58f7bfdb89-xfrkx   1/1     Running   0          28s
-Copied!
+```
 The test-logger pods will continuously print messages randomly selected from the following for demo purposes. You can find the source in the logger.go file.
-
+```
  {"Error": true, "Code": 1234, "Message": "error happened with logging system"}
  Another test {"Info": "Processing system events", "Code": 101} end
  data:100 0.5 true This is an example
  Note: nothing happened
-Copied!
+```
 To verify, you can pick one of the pods and use the command kubectl logs to view the logs. For example:
-
+```
 kubectl logs -l component=test-logger
-Copied!
-Deploying the Fluent Bit daemonset to your cluster
+```
+# Deploying the Fluent Bit daemonset to your cluster
 Duration: 10:00
 
 In this section, you configure and deploy your Fluent Bit daemonset.
 
-Because you turned on system-only logging, a GKE-managed Fluentd daemonset is deployed that is responsible for system logging. The Kubernetes manifests for Fluent Bit that you deploy in this procedure are versions of the ones available from the Fluent Bit site for logging using Cloud Logging and watching changes to Docker log files.
+Because you turned on system-only logging, a GKE-managed Fluentd daemonset is deployed that is responsible for system logging. The Kubernetes manifests for Fluent Bit that you deploy in this procedure are versions of the ones available from the Fluent Bit site for [logging using Cloud Logging](https://docs.fluentbit.io/manual/installation/kubernetes/) and [watching changes to Docker log files](https://kubernetes.io/docs/concepts/cluster-administration/logging/).
 
 Create the service account and the cluster role in a new logging namespace:
-
+```
 kubectl apply -f ./kubernetes/fluentbit-rbac.yaml
-Copied!
+```
 Deploy the Fluent Bit configuration:
-
+```
 kubectl apply -f kubernetes/fluentbit-configmap.yaml
-Copied!
+```
 Deploy the Fluent Bit daemonset:
-
+```
 kubectl apply -f kubernetes/fluentbit-daemonset.yaml
-Copied!
+```
 Check that the Fluent Bit pods have started:
-
+```
 kubectl get pods --namespace=logging
-Copied!
+```
 If they're running, you see output like the following:
-
+```
 NAME               READY   STATUS    RESTARTS   AGE
 fluent-bit-246wz   1/1     Running   0          26s
 fluent-bit-6h6ww   1/1     Running   0          26s
 fluent-bit-zpp8q   1/1     Running   0          26s
-Copied!
+```
 For details on configuring Fluent Bit for Kubernetes, see the Fluent Bit manual.
 
 Verify that you're seeing logs in Cloud Logging. In the console, on the left-hand side, select Logging > Logs Explorer, and then select Kubernetes Container as a resource type in the Resource list.
 
 In the Logs fields, select test-logger for CONTAINER_NAME and you should see logs from our test containers. Expand one of the log entries, and you can see the log message from your container is stored as a string in the **log** field under **jsonPayload** regardless of its original format. Additional info such as timestamp is also added to the log field.
 
-Click Run Query.
+Click **Run Query**.
 
 Alternatively, you can run the following query in the query window:
 ```
