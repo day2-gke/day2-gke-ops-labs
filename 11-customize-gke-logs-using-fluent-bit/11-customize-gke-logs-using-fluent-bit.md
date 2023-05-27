@@ -155,14 +155,14 @@ In the Logs fields, select test-logger for CONTAINER_NAME and you should see log
 Click Run Query.
 
 Alternatively, you can run the following query in the query window:
-
+```
 resource.type="k8s_container"
 resource.labels.container_name="test-logger"
-Copied!
+```
 In the query results window, select a row and expand the jsonPayload field. You should see something like the following. Your log message might be different but everything would be in the **log** field.
 
 483161ae9e243f84.png
-Approaches to transform the logs
+# Approaches to transform the logs
 Duration: 10:00
 
 As you see earlier, the **log** field is a long string. You have multiple options to transform it to a json structure. Those options all involve using Fluent Bit filters and you also need some understanding of the format for your raw log messages.
