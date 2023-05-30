@@ -32,5 +32,5 @@ resource "time_sleep" "apis_propagation" {
   depends_on = [
     google_project_service.apis,
   ]
-  create_duration = "240s"
+  create_duration = "360s"
 }
