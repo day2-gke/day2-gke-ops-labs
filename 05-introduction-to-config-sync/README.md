@@ -24,15 +24,7 @@ GKE creates a fixed workload identity pool for each Google Cloud project, with t
 - [Enable Workload Identity on GKE](https://cloud.google.com/sdk/gcloud/reference/container/clusters/update#--workload-pool)
 - [Verify GKE Clusters](https://cloud.google.com/sdk/gcloud/reference/container/clusters/describe)
 
-**Caution**: Modifying a node pool immediately enables GKE Workload Identity for any workloads running in the node pool. This prevents the workloads from using the Compute Engine default service account and might result in disruptions. You can selectively disable GKE Workload Identity on a specific node pool by explicitly specifying --workload-metadata=GCE_METADATA. See Protecting cluster metadata for more information
-
-**IAM**
-
-For GKE clusters, add the following IAM role to get admin permissions on the cluster, if you don't have it already (your user account is likely to have it if you created the cluster):
-
-- `roles/container.admin`
-
-This IAM role includes the Kubernetes RBAC cluster-admin role. For other cluster environments you need to grant this RBAC role using kubectl, as described in the next section. You can find out more about the relationship between IAM and RBAC roles in GKE in the GKE documentation.
+**Caution**: Modifying a node pool immediately enables GKE Workload Identity for any workloads running in the node pool. This prevents the workloads from using the Compute Engine default service account and might result in disruptions. You can selectively disable GKE Workload Identity on a specific node pool by explicitly specifying --workload-metadata=GCE_METADATA. See Protecting cluster metadata for more information.
 
 ## Register clusters to the Fleet Host Project
 
