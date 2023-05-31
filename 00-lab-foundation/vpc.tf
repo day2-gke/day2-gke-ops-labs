@@ -3,6 +3,7 @@
 resource "google_compute_network" "gke_day2_ops" {
   name                    = "gke-day2-ops"
   auto_create_subnetworks = false
+  depends_on             = [time_sleep.apis_propagation]
 }
 
 resource "google_compute_subnetwork" "workstations" {
