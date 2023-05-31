@@ -68,8 +68,8 @@ In this lab, you will learn how to do the following:
    kind: Namespace
    apiVersion: v1
    metadata:
-   name: app-team-a
-   labels:
+     name: app-team-a
+     labels:
        team: app-team-a
    EOF
    ```
