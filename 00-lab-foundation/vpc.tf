@@ -11,6 +11,7 @@ resource "google_compute_subnetwork" "workstations" {
   ip_cidr_range = "10.0.0.0/24"
   region        = var.deploy_region
   network       = google_compute_network.gke_day2_ops.name
+  depends_on             = [time_sleep.apis_propagation]
 }
 
 resource "google_compute_subnetwork" "gke" {
@@ -18,6 +19,7 @@ resource "google_compute_subnetwork" "gke" {
   ip_cidr_range = "10.100.0.0/24"
   region        = var.deploy_region
   network       = google_compute_network.gke_day2_ops.name
+  depends_on             = [time_sleep.apis_propagation]
   secondary_ip_range {
     range_name    = "gke-pods"
     ip_cidr_range = "10.100.1.0/24"
