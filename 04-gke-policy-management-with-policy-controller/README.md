@@ -32,12 +32,12 @@ In this lab, you will learn how to do the following:
    apiVersion: constraints.gatekeeper.sh/v1beta1
    kind: K8sRequiredLabels
    metadata:
-   name: ns-must-have-team-label
+      name: ns-must-have-team-label
    spec:
-   match:
-       kinds:
-       - apiGroups: [""]
-       kinds: ["Namespace"]
+      match:
+          kinds:
+          - apiGroups: [""]
+          kinds: ["Namespace"]
    parameters:
        labels:
        - key: "team"
