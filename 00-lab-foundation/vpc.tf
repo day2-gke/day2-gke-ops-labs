@@ -3,7 +3,7 @@
 resource "google_compute_network" "gke_day2_ops" {
   name                    = "gke-day2-ops"
   auto_create_subnetworks = false
-  depends_on             = [time_sleep.apis_propagation]
+  depends_on              = [time_sleep.apis_propagation]
 }
 
 resource "google_compute_subnetwork" "workstations" {
@@ -11,7 +11,7 @@ resource "google_compute_subnetwork" "workstations" {
   ip_cidr_range = "10.0.0.0/24"
   region        = var.deploy_region
   network       = google_compute_network.gke_day2_ops.name
-  depends_on             = [time_sleep.apis_propagation]
+  depends_on    = [time_sleep.apis_propagation]
 }
 
 resource "google_compute_subnetwork" "gke" {
@@ -19,13 +19,13 @@ resource "google_compute_subnetwork" "gke" {
   ip_cidr_range = "10.100.0.0/24"
   region        = var.deploy_region
   network       = google_compute_network.gke_day2_ops.name
-  depends_on             = [time_sleep.apis_propagation]
+  depends_on    = [time_sleep.apis_propagation]
   secondary_ip_range {
     range_name    = "gke-pods"
-    ip_cidr_range = "10.100.1.0/24"
+    ip_cidr_range = "10.100.8.0/21"
   }
   secondary_ip_range {
     range_name    = "gke-services"
-    ip_cidr_range = "10.100.2.0/24"
+    ip_cidr_range = "10.100.16.0/21"
   }
 }
