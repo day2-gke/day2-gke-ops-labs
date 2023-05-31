@@ -24,8 +24,16 @@ resource "google_workstations_workstation_config" "default" {
   depends_on             = [time_sleep.apis_propagation]
   host {
     gce_instance {
-      machine_type                = "e2-standard-4"
-      boot_disk_size_gb           = 35
+      machine_type      = "e2-standard-4"
+      boot_disk_size_gb = 35
+    }
+  }
+
+  persistent_directories {
+    mount_path = "/home"
+    gce_pd {
+      size_gb        = 200
+      reclaim_policy = "DELETE"
     }
   }
 }
