@@ -32,13 +32,13 @@ In this lab, you will learn how to do the following:
    apiVersion: constraints.gatekeeper.sh/v1beta1
    kind: K8sRequiredLabels
    metadata:
-   name: ns-must-have-team-label
+     name: ns-must-have-team-label
    spec:
-   match:
+     match:
        kinds:
        - apiGroups: [""]
-       kinds: ["Namespace"]
-   parameters:
+         kinds: ["Namespace"]
+     parameters:
        labels:
        - key: "team"
    EOF
@@ -68,8 +68,8 @@ In this lab, you will learn how to do the following:
    kind: Namespace
    apiVersion: v1
    metadata:
-   name: app-team-a
-   labels:
+     name: app-team-a
+     labels:
        team: app-team-a
    EOF
    ```

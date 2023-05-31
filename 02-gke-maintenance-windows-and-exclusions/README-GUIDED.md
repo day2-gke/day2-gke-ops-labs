@@ -62,9 +62,9 @@ In both cases, the RFC-5545 RRULE is always in UTC. That means that if specifyin
 To configure a maintenance window, you configure when it starts, how long it lasts, and how often it repeats. For example, you can configure a maintenance window that recurs weekly on Monday through Friday. You must allow at least 48 hours of maintenance availability in a 32-day rolling window. Only contiguous availability windows of at least four hours are considered.
 
 ### Configure a maintenance window for an existing cluster
-To create or update a maintenance window for existing-cluster on Monday to Friday starting at 00:00 Central Standard Time (CST) and lasting four hours, run the following command:
+To create or update a maintenance window for prod-cluster on Monday to Friday starting at 00:00 Central Standard Time (CST) and lasting four hours, run the following command:
 ```
-gcloud container clusters update existing-cluster \
+gcloud container clusters update prod-cluster \
 --maintenance-window-start 1970-01-01T00:00:00-06:00 \
 --maintenance-window-end 1970-01-01T04:00:00-06:00 \
 --maintenance-window-recurrence 'FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR'  \
@@ -76,15 +76,15 @@ gcloud container clusters update existing-cluster \
   3. --maintenance-window-recurrence: an RFC-5545 RRULE. This is an extremely flexible format with multiple ways to specify recurrence rules.
 
 
-- Verify existing-cluster has the maintenance window configured
+- Verify prod-cluster has the maintenance window configured
 ```
-gcloud container clusters describe existing-cluster \
+gcloud container clusters describe prod-cluster \
 --zone=<your-zone> | grep -A 4 recurringWindow
 ```
 
-- To see the cluster settings in the Console navigate to Kubernetes Engine > Clusters > existing-cluster or run the following command and click on the URL
+- To see the cluster settings in the Console navigate to Kubernetes Engine > Clusters > prod-cluster or run the following command and click on the URL
 ```
-echo -e "\nexisting-cluster URL: https://console.cloud.google.com/kubernetes/clusters/details/<your-zone>/existing-cluster/details?project=${GOOGLE_CLOUD_PROJECT}\n"
+echo -e "\nprod-cluster URL: https://console.cloud.google.com/kubernetes/clusters/details/<your-zone>/prod-cluster/details?project=${GOOGLE_CLOUD_PROJECT}\n"
 ```
 In the **Automation** section there is a **Maintenance window** entry that shows the configured settings.
 
@@ -108,21 +108,21 @@ echo -e "\nsimple-maintenance-window-cluster URL: https://console.cloud.google.c
 In the Automation section there is a Maintenance window entry that shows the configured settings.
 
 ## Remove a maintenance window
-- To remove the existing maintenance windows on existing-cluster, run the following command:
+- To remove the existing maintenance windows on prod-cluster, run the following command:
 ```
-gcloud container clusters update existing-cluster \
+gcloud container clusters update prod-cluster \
 --clear-maintenance-window \
 --zone <your-zone>
 ```
 
-- Verify existing-cluster has the maintenance window removed
+- Verify prod-cluster has the maintenance window removed
 ```
-gcloud container clusters describe existing-cluster \
+gcloud container clusters describe prod-cluster \
 --zone=us-central1-a | grep -A 4 recurringWindow
 ```              
-- To see the cluster settings in the Console navigate to Kubernetes Engine > Clusters > existing-cluster or run the following command and click on the URL
+- To see the cluster settings in the Console navigate to Kubernetes Engine > Clusters > prod-cluster or run the following command and click on the URL
 ```
-echo -e "\nexisting-cluster URL: https://console.cloud.google.com/kubernetes/clusters/details/us-central1-a/existing-cluster/details?project=${GOOGLE_CLOUD_PROJECT}\n"
+echo -e "\nprod-cluster URL: https://console.cloud.google.com/kubernetes/clusters/details/us-central1-a/prod-cluster/details?project=${GOOGLE_CLOUD_PROJECT}\n"
 ```
 In the Automation section there is a Maintenance window entry that shows the settings are removed.
 
@@ -234,9 +234,9 @@ Maintenance exclusions have the following limitations:
 - If you do not specify a scope in your exclusion, the scope defaults to "no upgrades".
 
 ## Configure a maintenance exclusion for an existing cluster
-- To create a maintenance exclusion for existing-cluster for Black Friday, run the following command:
+- To create a maintenance exclusion for prod-cluster for Black Friday, run the following command:
 ```
-gcloud container clusters update existing-cluster \
+gcloud container clusters update prod-cluster \
 --add-maintenance-exclusion-name black-friday \
 --add-maintenance-exclusion-start 2022-11-23T00:00:00-06:00 \
 --add-maintenance-exclusion-end 2022-11-26T23:59:59-06:00 \
@@ -251,32 +251,32 @@ gcloud container clusters update existing-cluster \
 
 To view supported date and time formats, run gcloud topic datetimes.
 
-- Verify existing-cluster has the maintenance exclusion configured
+- Verify prod-cluster has the maintenance exclusion configured
 ```
-gcloud container clusters describe existing-cluster \
+gcloud container clusters describe prod-cluster \
 --zone=us-central1-a | grep -A 4 maintenanceExclusions
 ```
-- To see the cluster settings in the Console navigate to Kubernetes Engine > Clusters > existing-cluster or run the following command and click on the URL
+- To see the cluster settings in the Console navigate to Kubernetes Engine > Clusters > prod-cluster or run the following command and click on the URL
 ```
-echo -e "\nexisting-cluster URL: https://console.cloud.google.com/kubernetes/clusters/details/us-central1-a/existing-cluster/details?project=${GOOGLE_CLOUD_PROJECT}\n"
+echo -e "\nprod-cluster URL: https://console.cloud.google.com/kubernetes/clusters/details/us-central1-a/prod-cluster/details?project=${GOOGLE_CLOUD_PROJECT}\n"
 ```
 In the Automation section there is a Maintenance exclusions entry that shows the configured settings
 
 ## Remove a maintenance exclusion
-- To remove the existing maintenance exclusion on existing-cluster for Black Friday, run the following command:
+- To remove the existing maintenance exclusion on prod-cluster for Black Friday, run the following command:
 ```
-gcloud container clusters update existing-cluster \
+gcloud container clusters update prod-cluster \
 --remove-maintenance-exclusion black-friday \
 --zone us-central1-a
 ```
-- Verify existing-cluster has the maintenance exclusion has been removed
+- Verify prod-cluster has the maintenance exclusion has been removed
 ```
-gcloud container clusters describe existing-cluster \
+gcloud container clusters describe prod-cluster \
 --zone=us-central1-a | grep -A 4 maintenanceExclusions
 ```                 
-- To see the cluster settings in the Console navigate to Kubernetes Engine > Clusters > existing-cluster or run the following command and click on the URL
+- To see the cluster settings in the Console navigate to Kubernetes Engine > Clusters > prod-cluster or run the following command and click on the URL
 ```
-echo -e "\nexisting-cluster URL: https://console.cloud.google.com/kubernetes/clusters/details/us-central1-a/existing-cluster/details?project=${GOOGLE_CLOUD_PROJECT}\n"
+echo -e "\nprod-cluster URL: https://console.cloud.google.com/kubernetes/clusters/details/us-central1-a/prod-cluster/details?project=${GOOGLE_CLOUD_PROJECT}\n"
 ```
 In the Automation section there is a Maintenance exclusions entry that shows the settings are removed.
 
