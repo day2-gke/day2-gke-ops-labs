@@ -15,17 +15,27 @@ You can enroll a new or existing cluster in a release channel.
 - Enroll prod-cluster in the stable release channel
 
 ```
-gcloud container clusters update prod-cluster \
+gcloud container clusters create prod-cluster \
+--enable-ip-alias \
+--network=gke-day2-ops \
+--subnetwork=gke-primary \
+--cluster-secondary-range-name=gke-pods \
+--services-secondary-range-name=gke-services \
 --release-channel=stable \
---zone=us-central1-a
+--zone=europe-west2-a
 ```
 
 - Verify prod-cluster is enrolled in the stable release channel
 
 ```
-gcloud container clusters describe prod-cluster \
---format="value(releaseChannel.channel)" \
---zone=us-central1-a
+gcloud container clusters create dev-cluster \
+--enable-ip-alias \
+--network=gke-day2-ops \
+--subnetwork=gke-primary \
+--cluster-secondary-range-name=gke-pods \
+--services-secondary-range-name=gke-services \
+--release-channel=stable \
+--zone=europe-west2-a
 ```
 
 #### Enroll a clusters when creating
