@@ -50,13 +50,16 @@ For this lab we will install Config Sync and configure it to use the configs in 
    cat <<EOF > ${HOME}/config-sync/apply-spec.yaml
    applySpecVersion: 1
    spec:
-   configSync:
-       enabled: true
-       policyDir: /config-sync-quickstart/multirepo/root
-       secretType: none
-       sourceFormat: unstructured
-       syncBranch: main
-       syncRepo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples
+    configSync:
+        enabled: true
+        policyDir: /config-sync-quickstart/multirepo/root
+        secretType: none
+        sourceFormat: unstructured
+        syncBranch: main
+        syncRepo: https://github.com/GoogleCloudPlatform/anthos-config-management-samples
+    policyController:
+        enabled: true
+        templateLibraryInstalled: true
    EOF
    ```
 3. Apply configuration to the `dev-cluster` and `prod-cluster`
