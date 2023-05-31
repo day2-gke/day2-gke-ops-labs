@@ -38,9 +38,9 @@ In this lab, you will learn how to do the following:
           kinds:
           - apiGroups: [""]
           kinds: ["Namespace"]
-   parameters:
-       labels:
-       - key: "team"
+      parameters:
+          labels:
+          - key: "team"
    EOF
    ```
 2. Verify the constraint has been applied
