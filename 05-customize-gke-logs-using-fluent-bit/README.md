@@ -20,6 +20,7 @@ In this lab, you will learn how to do the following:
    - docker build -t test-logger test-logger
    - docker tag test-logger gcr.io/${project_id}/test-logger
    - docker push gcr.io/${project_id}/test-logger
+   - gcloud container clusters get-credentials dev-cluster --zone=europe-west2-a
    - kubectl apply -f kubernetes/test-logger-deploy.yaml
 
 2. Verify the status of the test-logger pods on the **dev-cluster**
