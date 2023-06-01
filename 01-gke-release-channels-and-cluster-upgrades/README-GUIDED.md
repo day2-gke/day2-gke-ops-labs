@@ -36,6 +36,7 @@ gcloud container clusters create dev-cluster \
 --services-secondary-range-name=gke-services \
 --release-channel=stable \
 --zone=europe-west2-a
+--logging=SYSTEM
 ```
 
 #### Enroll a clusters when creating
