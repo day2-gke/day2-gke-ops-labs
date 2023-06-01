@@ -18,6 +18,7 @@ GKE release channels offer you the ability to balance between stability and feat
    - Primary GKE network: gke-primary
    - Pod secondary range name: gke-pods
    - Services secondary range name: gke-services
+   - Send SYSTEM logs only
    ```
 2. Create a GKE cluster called `prod-cluster` with the following configurations:
    ```
