@@ -18,10 +18,10 @@ In this lab, you will learn how to do the following:
    - git clone https://github.com/xiangshen-dk/kubernetes-customize-fluentbit.git
    - cd kubernetes-customize-fluentbit
    - docker build -t test-logger test-logger
-   - docker tag test-logger gcr.io/${project_id}/test-logger
-   - docker push gcr.io/${project_id}/test-logger
+   - docker tag test-logger gcr.io/${PROJECT_ID}/test-logger
+   - docker push gcr.io/${PROJECT_ID}/test-logger
    - gcloud container clusters get-credentials dev-cluster --zone=europe-west2-a
-   - kubectl apply -f kubernetes/test-logger-deploy.yaml
+   - kubectl apply -f kubernetes/test-logger.yaml
 
 2. Verify the status of the test-logger pods on the **dev-cluster**
 3. Verify the logs i.e. `kubectl logs -l component=test-logger`
