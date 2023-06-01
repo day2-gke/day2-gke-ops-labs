@@ -68,7 +68,7 @@ gcloud container clusters update prod-cluster \
 --maintenance-window-start 1970-01-01T00:00:00-06:00 \
 --maintenance-window-end 1970-01-01T04:00:00-06:00 \
 --maintenance-window-recurrence 'FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR'  \
---zone <your-zone>
+--zone europe-west2-a
 ```
 **Flags**
   1. --maintenance-window-start: when to start the maintenance window, expressed as an RFC-5545 DTSTART value.
@@ -79,50 +79,55 @@ gcloud container clusters update prod-cluster \
 - Verify prod-cluster has the maintenance window configured
 ```
 gcloud container clusters describe prod-cluster \
---zone=<your-zone> | grep -A 4 recurringWindow
+--zone=europe-west2-a | grep -A 4 recurringWindow
 ```
 
 - To see the cluster settings in the Console navigate to Kubernetes Engine > Clusters > prod-cluster or run the following command and click on the URL
 ```
-echo -e "\nprod-cluster URL: https://console.cloud.google.com/kubernetes/clusters/details/<your-zone>/prod-cluster/details?project=${GOOGLE_CLOUD_PROJECT}\n"
+echo -e "\nprod-cluster URL: https://console.cloud.google.com/kubernetes/clusters/details/europe-west2-a/prod-cluster/details?project=${GOOGLE_CLOUD_PROJECT}\n"
 ```
 In the **Automation** section there is a **Maintenance window** entry that shows the configured settings.
 
-## Create a cluster with a simple maintenance window
+## Create a cluster with a simple maintenance window (OPTIONAL)
 - To create simple-maintenance-window-cluster with a simple maintenance window that runs each day starting at 5:00 UTC or 00:00 Central Standard Time (CST) and lasting four hours, run the following command:
 ```
 gcloud container clusters create simple-maintenance-window-cluster \
 --maintenance-window 5:00 \
 --num-nodes=1 \
---zone=<your-zone>
+--zone=europe-west2-a
 ```
 - Verify simple-maintenance-window-cluster has the maintenance window configured
 ```
 gcloud container clusters describe simple-maintenance-window-cluster \
---zone=<your-zone> | grep -A 2 dailyMaintenanceWindow
+--zone=europe-west2-a | grep -A 2 dailyMaintenanceWindow
 ```
 - To see the cluster settings in the Console navigate to Kubernetes Engine > Clusters > simple-maintenance-window-cluster or run the following command and click on the URL
 ```
-echo -e "\nsimple-maintenance-window-cluster URL: https://console.cloud.google.com/kubernetes/clusters/details/<your-zone>/simple-maintenance-window-cluster/details?project=${GOOGLE_CLOUD_PROJECT}\n"
+echo -e "\nsimple-maintenance-window-cluster URL: https://console.cloud.google.com/kubernetes/clusters/details/europe-west2-a/simple-maintenance-window-cluster/details?project=${GOOGLE_CLOUD_PROJECT}\n"
 ```
 In the Automation section there is a Maintenance window entry that shows the configured settings.
+
+Remove the cluster:
+```
+gcloud container clusters delete simple-maintenance-window-cluster --zone=europe-west2-a
+```
 
 ## Remove a maintenance window
 - To remove the existing maintenance windows on prod-cluster, run the following command:
 ```
 gcloud container clusters update prod-cluster \
 --clear-maintenance-window \
---zone <your-zone>
+--zone=europe-west2-a
 ```
 
 - Verify prod-cluster has the maintenance window removed
 ```
 gcloud container clusters describe prod-cluster \
---zone=us-central1-a | grep -A 4 recurringWindow
+--zone=europe-west2-a | grep -A 4 recurringWindow
 ```              
 - To see the cluster settings in the Console navigate to Kubernetes Engine > Clusters > prod-cluster or run the following command and click on the URL
 ```
-echo -e "\nprod-cluster URL: https://console.cloud.google.com/kubernetes/clusters/details/us-central1-a/prod-cluster/details?project=${GOOGLE_CLOUD_PROJECT}\n"
+echo -e "\nprod-cluster URL: https://console.cloud.google.com/kubernetes/clusters/details/europe-west2-a/prod-cluster/details?project=${GOOGLE_CLOUD_PROJECT}\n"
 ```
 In the Automation section there is a Maintenance window entry that shows the settings are removed.
 
@@ -241,7 +246,7 @@ gcloud container clusters update prod-cluster \
 --add-maintenance-exclusion-start 2022-11-23T00:00:00-06:00 \
 --add-maintenance-exclusion-end 2022-11-26T23:59:59-06:00 \
 --add-maintenance-exclusion-scope no_upgrades \
---zone us-central1-a
+--zone europe-west2-a
 ```
 **Flags**
 1. --add-maintenance-exclusion-name : the name of the maintenance exclusion.
@@ -254,11 +259,11 @@ To view supported date and time formats, run gcloud topic datetimes.
 - Verify prod-cluster has the maintenance exclusion configured
 ```
 gcloud container clusters describe prod-cluster \
---zone=us-central1-a | grep -A 4 maintenanceExclusions
+--zone=europe-west2-a | grep -A 4 maintenanceExclusions
 ```
 - To see the cluster settings in the Console navigate to Kubernetes Engine > Clusters > prod-cluster or run the following command and click on the URL
 ```
-echo -e "\nprod-cluster URL: https://console.cloud.google.com/kubernetes/clusters/details/us-central1-a/prod-cluster/details?project=${GOOGLE_CLOUD_PROJECT}\n"
+echo -e "\nprod-cluster URL: https://console.cloud.google.com/kubernetes/clusters/details/europe-west2-a/prod-cluster/details?project=${GOOGLE_CLOUD_PROJECT}\n"
 ```
 In the Automation section there is a Maintenance exclusions entry that shows the configured settings
 
@@ -267,16 +272,16 @@ In the Automation section there is a Maintenance exclusions entry that shows the
 ```
 gcloud container clusters update prod-cluster \
 --remove-maintenance-exclusion black-friday \
---zone us-central1-a
+--zone europe-west2-a
 ```
 - Verify prod-cluster has the maintenance exclusion has been removed
 ```
 gcloud container clusters describe prod-cluster \
---zone=us-central1-a | grep -A 4 maintenanceExclusions
+--zone=europe-west2-a | grep -A 4 maintenanceExclusions
 ```                 
 - To see the cluster settings in the Console navigate to Kubernetes Engine > Clusters > prod-cluster or run the following command and click on the URL
 ```
-echo -e "\nprod-cluster URL: https://console.cloud.google.com/kubernetes/clusters/details/us-central1-a/prod-cluster/details?project=${GOOGLE_CLOUD_PROJECT}\n"
+echo -e "\nprod-cluster URL: https://console.cloud.google.com/kubernetes/clusters/details/europe-west2-a/prod-cluster/details?project=${GOOGLE_CLOUD_PROJECT}\n"
 ```
 In the Automation section there is a Maintenance exclusions entry that shows the settings are removed.
 
